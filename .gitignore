@@ -1,0 +1,15 @@
+# Idea project files
+*.eml
+*.ipr
+*.iws
+*.iml
+
+reports
+targets
+build
+test-output
+var
+out
+
+.gradle
+.idea
