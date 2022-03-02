@@ -1,16 +1,49 @@
 package ru.stud.kpfu.kalugin.model;
 
 import javax.persistence.*;
+import java.util.List;
 
 @Entity
 @Table(name = "users")
 public class User {
+
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO)
     private Integer id;
+
     private String name;
+
+    @Column(unique = true)
     private String email;
+
     private String password;
+
+    @OneToMany(cascade = CascadeType.MERGE)
+    private List<Appeal> appeals;
+
+//    @ManyToOne(fetch = FetchType.LAZY)
+//    @JoinColumn(name = "group_id")
+//    private Group group;
+
+//    @OneToOne
+//    @JoinColumn(name = "passport_id")
+//    private Passport passport;
+
+//    public Group getGroup() {
+//        return group;
+//    }
+
+//    public void setGroup(Group group) {
+//        this.group = group;
+//    }
+//
+//    public Passport getPassport() {
+//        return passport;
+//    }
+//
+//    public void setPassport(Passport passport) {
+//        this.passport = passport;
+//    }
 
     public User() {}
 
@@ -46,9 +79,18 @@ public class User {
         this.password = password;
     }
 
-    public User(String name, String email, String password) {
+    public User(String name, String email, String password, List<Appeal> appeals) {
         this.name = name;
         this.email = email;
         this.password = password;
+        this.appeals = appeals;
+    }
+
+    public User(Integer id,String name, String email, String password, List<Appeal> appeals) {
+        this.id = id;
+        this.name = name;
+        this.email = email;
+        this.password = password;
+        this.appeals = appeals;
     }
 }
