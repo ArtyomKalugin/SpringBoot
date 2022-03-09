@@ -1,6 +1,7 @@
 package ru.stud.kpfu.kalugin.service.impl;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
 import ru.stud.kpfu.kalugin.dto.CreateUserDto;
 import ru.stud.kpfu.kalugin.dto.UserDto;
@@ -17,10 +18,12 @@ import java.util.stream.Collectors;
 public class UserServiceImpl implements UserService {
 
     private final UserRepository userRepository;
+    private final BCryptPasswordEncoder encoder;
 
     @Autowired
-    public UserServiceImpl(UserRepository userRepository) {
+    public UserServiceImpl(UserRepository userRepository, BCryptPasswordEncoder encoder) {
         this.userRepository = userRepository;
+        this.encoder = encoder;
     }
 
     @Override
@@ -44,6 +47,6 @@ public class UserServiceImpl implements UserService {
     @Override
     public UserDto save(CreateUserDto user) {
         return UserDto.fromModel(userRepository.save(new User(user.getName(), user.getEmail(),
-                PasswordHelper.encrypt(user.getPassword()), Collections.emptyList())));
+                encoder.encode(user.getPassword()), Collections.emptyList())));
     }
 }
