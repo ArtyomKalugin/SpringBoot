@@ -1,15 +1,21 @@
 package ru.stud.kpfu.kalugin.service.impl;
 
+import net.bytebuddy.utility.RandomString;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.mail.javamail.MimeMessageHelper;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
+import ru.stud.kpfu.kalugin.config.MailConfig;
 import ru.stud.kpfu.kalugin.dto.CreateUserDto;
 import ru.stud.kpfu.kalugin.dto.UserDto;
-import ru.stud.kpfu.kalugin.helper.PasswordHelper;
 import ru.stud.kpfu.kalugin.model.User;
 import ru.stud.kpfu.kalugin.repository.UserRepository;
 import ru.stud.kpfu.kalugin.service.UserService;
+import org.springframework.mail.javamail.JavaMailSender;
 
+import javax.mail.MessagingException;
+import javax.mail.internet.MimeMessage;
+import java.io.UnsupportedEncodingException;
 import java.util.Collections;
 import java.util.List;
 import java.util.stream.Collectors;
@@ -19,11 +25,16 @@ public class UserServiceImpl implements UserService {
 
     private final UserRepository userRepository;
     private final BCryptPasswordEncoder encoder;
+    private final JavaMailSender javaMailSender;
+    private final MailConfig mailConfig;
 
     @Autowired
-    public UserServiceImpl(UserRepository userRepository, BCryptPasswordEncoder encoder) {
+    public UserServiceImpl(UserRepository userRepository, BCryptPasswordEncoder encoder,
+                           JavaMailSender javaMailSender, MailConfig mailConfig) {
         this.userRepository = userRepository;
         this.encoder = encoder;
+        this.javaMailSender = javaMailSender;
+        this.mailConfig = mailConfig;
     }
 
     @Override
@@ -35,7 +46,7 @@ public class UserServiceImpl implements UserService {
     @Override
     public UserDto getById(Integer id) {
         User user = userRepository.findById(id).orElse(new User("ivan",
-                "ootsal@mail.ru", "1", Collections.emptyList()));
+                "ootsal@mail.ru", "1", Collections.emptyList(), "123"));
         return UserDto.fromModel(user);
     }
 
@@ -45,8 +56,54 @@ public class UserServiceImpl implements UserService {
     }
 
     @Override
-    public UserDto save(CreateUserDto user) {
+    public UserDto save(CreateUserDto user, String url) {
+        String code = RandomString.make(64);
+        sendVerificationMail(user.getEmail(), user.getName(), code, url);
+
         return UserDto.fromModel(userRepository.save(new User(user.getName(), user.getEmail(),
-                encoder.encode(user.getPassword()), Collections.emptyList())));
+                encoder.encode(user.getPassword()), Collections.emptyList(), code)));
+    }
+
+    @Override
+    public boolean verify(String verificationCode) {
+        User user = userRepository.findByVerificationCode(verificationCode);
+
+        if (user != null) {
+            user.setVerificationCode(null);
+            user.setEnabled(true);
+            userRepository.save(user);
+
+            return true;
+        }
+
+        return false;
+    }
+
+    @Override
+    public void sendVerificationMail(String mail, String name, String code, String url) {
+        String from = mailConfig.getFrom();
+        String sender = mailConfig.getSender();
+        String subject = mailConfig.getSubject();
+        String content = mailConfig.getContent();
+
+
+        MimeMessage mimeMessage = javaMailSender.createMimeMessage();
+        MimeMessageHelper helper = new MimeMessageHelper(mimeMessage);
+
+        try {
+            helper.setFrom(from, sender);
+
+            helper.setTo(mail);
+            helper.setSubject(subject);
+
+            content = content.replace("{name}", name);
+            content = content.replace("{url}", url + "/verification?code=" + code);
+
+            helper.setText(content, true);
+        } catch (MessagingException | UnsupportedEncodingException e) {
+            e.printStackTrace();
+        }
+
+        javaMailSender.send(mimeMessage);
     }
 }

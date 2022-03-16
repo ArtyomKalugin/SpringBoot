@@ -1,6 +1,7 @@
 package ru.stud.kpfu.kalugin.controller;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.core.Authentication;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestParam;
@@ -17,10 +18,10 @@ import ru.stud.kpfu.kalugin.service.HttpWeatherService;
 import ru.stud.kpfu.kalugin.service.UserService;
 import ru.stud.kpfu.kalugin.service.WeatherService;
 
+import javax.servlet.http.HttpServletRequest;
 import java.io.IOException;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
-import java.util.Collections;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
@@ -52,18 +53,18 @@ public class WeatherController {
     }
 
     @GetMapping("/weather")
-    public String getWeather(@RequestParam Optional<String> city, @RequestParam Optional<String> email)
+    public String getWeather(@RequestParam Optional<String> city, Authentication authentication)
             throws IOException {
-        String unwrappedEmail = email.orElse("non@mail.ru");
-        User user = userService.getByEmail(unwrappedEmail);
+        try {
+            String email = authentication.getName();
 
-        if (user != null) {
+            User user = userService.getByEmail(email);
             String result = httpWeatherService.get(city.orElse("Kazan"));
 
             if (result != null) {
                 Map<String, String> params = jsonHelper.parseJson(result);
                 Weather weather = new Weather(params.get("description"), params.get("humidity"),
-                        params.get("temp"), params.get("name"), unwrappedEmail);
+                        params.get("temp"), params.get("name"), email);
                 weatherService.save(weather);
 
                 LocalDateTime dateTime = LocalDateTime.now();
@@ -76,7 +77,7 @@ public class WeatherController {
             } else {
                 return "This city is not found!";
             }
-        } else {
+        } catch (NullPointerException e) {
             return "null";
         }
     }

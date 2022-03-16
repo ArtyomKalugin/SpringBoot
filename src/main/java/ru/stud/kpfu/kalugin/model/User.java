@@ -30,8 +30,13 @@ public class User {
     @Column(nullable = false, length = 64)
     private String password;
 
+    @Column(length = 64)
+    private String verificationCode;
+
     @OneToMany(cascade = CascadeType.MERGE)
     private List<Appeal> appeals;
+
+    private boolean enabled;
 
     public Set<Role> getRoles() {
         return roles;
@@ -64,6 +69,15 @@ public class User {
 //    public void setPassport(Passport passport) {
 //        this.passport = passport;
 //    }
+
+
+    public boolean isEnabled() {
+        return enabled;
+    }
+
+    public void setEnabled(boolean enabled) {
+        this.enabled = enabled;
+    }
 
     public User() {}
 
@@ -99,18 +113,36 @@ public class User {
         this.password = password;
     }
 
-    public User(String name, String email, String password, List<Appeal> appeals) {
+    public List<Appeal> getAppeals() {
+        return appeals;
+    }
+
+    public void setAppeals(List<Appeal> appeals) {
+        this.appeals = appeals;
+    }
+
+    public String getVerificationCode() {
+        return verificationCode;
+    }
+
+    public void setVerificationCode(String verificationCode) {
+        this.verificationCode = verificationCode;
+    }
+
+    public User(String name, String email, String password, List<Appeal> appeals, String verificationCode) {
         this.name = name;
         this.email = email;
         this.password = password;
         this.appeals = appeals;
+        this.verificationCode = verificationCode;
     }
 
-    public User(Integer id,String name, String email, String password, List<Appeal> appeals) {
+    public User(Integer id,String name, String email, String password, List<Appeal> appeals, String verificationCode) {
         this.id = id;
         this.name = name;
         this.email = email;
         this.password = password;
         this.appeals = appeals;
+        this.verificationCode = verificationCode;
     }
 }
