@@ -2,6 +2,7 @@ package ru.stud.kpfu.kalugin.controller;
 
 import org.junit.Before;
 import org.junit.Test;
+import org.junit.jupiter.api.BeforeAll;
 import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
@@ -14,6 +15,8 @@ import ru.stud.kpfu.kalugin.Application;
 import ru.stud.kpfu.kalugin.model.User;
 import ru.stud.kpfu.kalugin.repository.UserRepository;
 
+import java.util.Locale;
+
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
 
@@ -23,7 +26,7 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 @AutoConfigureMockMvc
 @TestPropertySource(locations = "classpath:application-test.properties")
 //@ActiveProfiles("test")
-class UserControllerTest {
+public class UserControllerTest {
 
     @Autowired
     private MockMvc mockMvc;
@@ -31,13 +34,23 @@ class UserControllerTest {
     @Autowired
     private UserRepository userRepository;
 
-    @Before
+    @BeforeAll
     public void init() {
         User user = new User();
         user.setEmail("m@mail.ru");
         user.setName("Ivan");
         user.setPassword("password");
+        user.setVerificationCode("wdwef");
         userRepository.save(user);
+    }
+
+    @Test
+    public void testGet() throws Exception {
+        mockMvc.perform(get("/user/1")
+                .contentType(MediaType.APPLICATION_JSON))
+                .andExpect(status().isOk())
+                .andExpect(content().contentTypeCompatibleWith(MediaType.APPLICATION_JSON))
+                .andExpect(jsonPath("$.name".toLowerCase(Locale.ROOT)).value("ivan"));
     }
 
     @Test
@@ -46,6 +59,13 @@ class UserControllerTest {
                 .contentType(MediaType.APPLICATION_JSON))
                 .andExpect(status().isOk())
                 .andExpect(content().contentTypeCompatibleWith(MediaType.APPLICATION_JSON))
-                .andExpect(jsonPath("$[0].name").value("Ivan"));
+                .andExpect(jsonPath("$.name".toLowerCase(Locale.ROOT)).value("ivan"));
+    }
+
+    @Test
+    public void testVerify() throws Exception {
+        mockMvc.perform(get("/verification?code=wdwef")).
+                andExpect(status().isOk()).
+                andExpect(content().string("verification_failed"));
     }
 }

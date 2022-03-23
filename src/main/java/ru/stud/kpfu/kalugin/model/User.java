@@ -121,7 +121,7 @@ public class User {
         this.appeals = appeals;
     }
 
-    public String getVerificationCode() {
+    public String getVerificationCode(String wefefw) {
         return verificationCode;
     }
 

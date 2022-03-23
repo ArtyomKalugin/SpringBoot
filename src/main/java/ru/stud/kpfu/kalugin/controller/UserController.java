@@ -11,7 +11,7 @@ import ru.stud.kpfu.kalugin.service.UserService;
 import javax.servlet.http.HttpServletRequest;
 
 
-@Controller
+@RestController
 public class UserController {
 
     private final UserService userService;

@@ -1,7 +1,10 @@
 <?xml version="1.0" encoding="UTF-8" ?>
-<databaseChangeLog xmlns="http://www.liquibase.org/xml/ns/dbchangelog/1.5">
+<databaseChangeLog xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+                   xmlns="http://www.liquibase.org/xml/ns/dbchangelog"
+                   xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog
+         http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-3.8.xsd">
 
-    <changeSet id="2022-03-23--01-init-tables" author="solncev">
+    <changeSet id="2022-03-23--01-init-tables" author="kalugin">
         <createTable tableName="users">
             <column name="id" type="serial" autoIncrement="true">
                 <constraints primaryKey="true"/>
@@ -32,12 +35,9 @@
             </column>
             <column name="email" type = "varchar">
             </column>
-            <column name="appeal" type = "integer">
-                <constraints foreignKeyName="appeal_id" nullable="false" references="appeal(id)"/>
-            </column>
         </createTable>
 
-        <createTable tableName="weather">
+        <createTable tableName="appeal">
             <column name="id" type="serial" autoIncrement="true">
                 <constraints primaryKey="true"/>
             </column>
@@ -47,7 +47,7 @@
                 <constraints foreignKeyName="weather_id" nullable="false" references="weather(id)"/>
             </column>
             <column name="user_id" type = "integer">
-                <constraints foreignKeyName="user_id" nullable="false" references="user(id)"/>
+                <constraints foreignKeyName="user_id" nullable="false" references="users(id)"/>
             </column>
         </createTable>
     </changeSet>
