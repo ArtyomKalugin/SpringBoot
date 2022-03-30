@@ -59,4 +59,14 @@ test {
 
 jacocoTestReport {
     dependsOn test
+    afterEvaluate {
+        classDirectories.setFrom(files(classDirectories.files.collect {
+            fileTree(dir: it, exclude: [
+                    'ru/stud/kpfu/kalugin/dto',
+                    'ru/stud/kpfu/kalugin/model',
+                    'ru/stud/kpfu/kalugin/security',
+                    'ru/stud/kpfu/kalugin/advice',
+            ])
+        }))
+    }
 }

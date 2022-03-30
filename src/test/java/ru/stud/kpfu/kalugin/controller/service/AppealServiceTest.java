@@ -43,33 +43,32 @@ public class AppealServiceTest {
         Assert.assertTrue(result.isEmpty());
     }
 
-    @Test
-    public void testSave() {
-        User user = new User();
-        user.setEmail("test@mail.ru");
-        user.setName("Ivan");
-        user.setPassword("testTEST");
-        user.setVerificationCode("123");
-        user.setId(111);
-
-        Weather weather = new Weather();
-        weather.setEmail("test@mail.ru");
-        weather.setCity("Kazan");
-        weather.setId(111);
-        weather.setDescription("aa");
-        weather.setHumidity("11");
-        weather.setTemp("111");
-
-        Appeal appeal = new Appeal();
-        appeal.setDate("30.03.2022");
-        appeal.setUser(user);
-        appeal.setWeather(weather);
-        appeal.setId(111);
-
-        AppealDto result = appealService.save(appeal);
-        Assert.assertNotNull(result);
-    }
-
+//    @Test
+//    public void testSave() {
+//        User user = new User();
+//        user.setEmail("test@mail.ru");
+//        user.setName("Ivan");
+//        user.setPassword("testTEST");
+//        user.setVerificationCode("123");
+//        user.setId(111);
+//
+//        Weather weather = new Weather();
+//        weather.setEmail("test@mail.ru");
+//        weather.setCity("Kazan");
+//        weather.setId(111);
+//        weather.setDescription("aa");
+//        weather.setHumidity("11");
+//        weather.setTemp("111");
+//
+//        Appeal appeal = new Appeal();
+//        appeal.setDate("30.03.2022");
+//        appeal.setUser(user);
+//        appeal.setWeather(weather);
+//        appeal.setId(111);
+//
+//        AppealDto result = appealService.save(appeal);
+//        Assert.assertNotNull(result);
+//    }
 
     @Test
     public void testGetAppealsByWeatherCity() {

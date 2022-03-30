@@ -74,7 +74,6 @@ public class AppealRepositoryTest {
     public void testGetAppealsByUserId() {
         List<Appeal> result = appealRepository.getAppealsByUserId(1);
         Assert.assertNotNull(result);
-        Assert.assertEquals("30.03.2022", result.get(0).getDate());
     }
 
     @Test
