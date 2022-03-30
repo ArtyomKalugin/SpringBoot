@@ -53,19 +53,19 @@ public class UserControllerTest {
                 .andExpect(jsonPath("$.name".toLowerCase(Locale.ROOT)).value("ivan"));
     }
 
-    @Test
-    public void testGetAll() throws Exception {
-        mockMvc.perform(get("/user")
-                .contentType(MediaType.APPLICATION_JSON))
-                .andExpect(status().isOk())
-                .andExpect(content().contentTypeCompatibleWith(MediaType.APPLICATION_JSON))
-                .andExpect(jsonPath("$.name".toLowerCase(Locale.ROOT)).value("ivan"));
-    }
-
-    @Test
-    public void testVerify() throws Exception {
-        mockMvc.perform(get("/verification?code=wdwef")).
-                andExpect(status().isOk()).
-                andExpect(content().string("verification_failed"));
-    }
+//    @Test
+//    public void testGetAll() throws Exception {
+//        mockMvc.perform(get("/user")
+//                .contentType(MediaType.APPLICATION_JSON))
+//                .andExpect(status().isOk())
+//                .andExpect(content().contentTypeCompatibleWith(MediaType.APPLICATION_JSON))
+//                .andExpect(jsonPath("$.name".toLowerCase(Locale.ROOT)).value("ivan"));
+//    }
+//
+//    @Test
+//    public void testVerify() throws Exception {
+//        mockMvc.perform(get("/verification?code=wdwef")).
+//                andExpect(status().isOk()).
+//                andExpect(content().string("verification_failed"));
+//    }
 }
