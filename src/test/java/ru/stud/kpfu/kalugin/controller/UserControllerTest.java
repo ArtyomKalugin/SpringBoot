@@ -1,6 +1,5 @@
 package ru.stud.kpfu.kalugin.controller;
 
-import org.junit.Before;
 import org.junit.Test;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.runner.RunWith;
@@ -53,19 +52,19 @@ public class UserControllerTest {
                 .andExpect(jsonPath("$.name".toLowerCase(Locale.ROOT)).value("ivan"));
     }
 
-//    @Test
-//    public void testGetAll() throws Exception {
-//        mockMvc.perform(get("/user")
-//                .contentType(MediaType.APPLICATION_JSON))
-//                .andExpect(status().isOk())
-//                .andExpect(content().contentTypeCompatibleWith(MediaType.APPLICATION_JSON))
-//                .andExpect(jsonPath("$.name".toLowerCase(Locale.ROOT)).value("ivan"));
-//    }
-//
-//    @Test
-//    public void testVerify() throws Exception {
-//        mockMvc.perform(get("/verification?code=wdwef")).
-//                andExpect(status().isOk()).
-//                andExpect(content().string("verification_failed"));
-//    }
+    @Test
+    public void testGetAll() throws Exception {
+        mockMvc.perform(get("/user")
+                .contentType(MediaType.APPLICATION_JSON))
+                .andExpect(status().isOk())
+                .andExpect(content().contentTypeCompatibleWith(MediaType.APPLICATION_JSON))
+                .andExpect(jsonPath("$.name".toLowerCase(Locale.ROOT)).value("ivan"));
+    }
+
+    @Test
+    public void testVerify() throws Exception {
+        mockMvc.perform(get("/verification?code=wdwef")).
+                andExpect(status().isOk()).
+                andExpect(content().string("verification_failed"));
+    }
 }

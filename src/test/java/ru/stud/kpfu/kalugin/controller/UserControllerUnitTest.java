@@ -9,13 +9,9 @@ import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.http.MediaType;
 import org.springframework.test.context.junit4.SpringRunner;
 import org.springframework.test.web.servlet.MockMvc;
-import ru.stud.kpfu.kalugin.dto.AppealDto;
-import ru.stud.kpfu.kalugin.model.Appeal;
+import ru.stud.kpfu.kalugin.dto.UserDto;
 import ru.stud.kpfu.kalugin.model.User;
-import ru.stud.kpfu.kalugin.model.Weather;
-import ru.stud.kpfu.kalugin.repository.AppealRepository;
 import ru.stud.kpfu.kalugin.repository.UserRepository;
-import ru.stud.kpfu.kalugin.service.AppealService;
 import ru.stud.kpfu.kalugin.service.UserService;
 
 import java.util.Arrays;
@@ -26,17 +22,11 @@ import static org.springframework.test.web.servlet.request.MockMvcRequestBuilder
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
 
 @RunWith(SpringRunner.class)
-@WebMvcTest(AppealController.class)
-public class AppealControllerTest {
+@WebMvcTest(UserController.class)
+public class UserControllerUnitTest {
 
     @Autowired
     private MockMvc mockMvc;
-
-    @MockBean
-    private AppealService appealService;
-
-    @MockBean
-    private AppealRepository appealRepository;
 
     @MockBean
     private UserService userService;
@@ -58,47 +48,33 @@ public class AppealControllerTest {
         user2.setPassword("testTEST");
         user2.setVerificationCode("1234");
 
-        Weather weather = new Weather();
-        weather.setEmail("test@mail.ru");
-        weather.setCity("Kazan");
+        User user3 = new User();
+        user3.setEmail("test3@mail.ru");
+        user3.setName("Igor");
+        user3.setPassword("testTEST");
+        user3.setVerificationCode("12345");
 
-        Weather weather2 = new Weather();
-        weather2.setEmail("test2@mail.ru");
-        weather2.setCity("Moscow");
-
-        Appeal appeal = new Appeal();
-        appeal.setDate("30.03.2022");
-        appeal.setUser(user);
-        appeal.setWeather(weather);
-
-        Appeal appeal2 = new Appeal();
-        appeal2.setDate("29.03.2022");
-        appeal2.setUser(user2);
-        appeal2.setWeather(weather2);
-
-        given(appealService.getAppealsByUserId(1)).willReturn(Arrays.asList(AppealDto.fromModel(appeal)));
-        given(appealService.getAppealsByWeatherCity("Moscow")).willReturn(Arrays.asList(AppealDto.fromModel(appeal2)));
+        given(userService.getAll()).willReturn(Arrays.asList(UserDto.fromModel(user)));
+        given(userService.getById(3)).willReturn(UserDto.fromModel(user3));
     }
 
     @Test
-    public void testGetAppealsByUserId() throws Exception {
-        mockMvc.perform(get("/appeals/1")
+    public void testGetAll() throws Exception {
+        mockMvc.perform(get("/user")
                 .contentType(MediaType.APPLICATION_JSON))
                 .andExpect(status().isOk())
                 .andExpect(content().contentTypeCompatibleWith(MediaType.APPLICATION_JSON))
                 .andExpect(jsonPath("$", hasSize(1)))
-                .andExpect(jsonPath("$[0].date").value("30.03.2022"));
+                .andExpect(jsonPath("$[0].name").value("Ivan"));
     }
 
     @Test
-    public void testGetAppealsByCity() throws Exception {
-        mockMvc.perform(get("/appeals/city/Moscow")
+    public void testGet() throws Exception {
+        mockMvc.perform(get("/user/3")
                 .contentType(MediaType.APPLICATION_JSON))
                 .andExpect(status().isOk())
                 .andExpect(content().contentTypeCompatibleWith(MediaType.APPLICATION_JSON))
-                .andExpect(jsonPath("$", hasSize(1)))
-                .andExpect(jsonPath("$[0].date").value("29.03.2022"));
+                .andExpect(jsonPath("$.name").value("Igor"));
     }
-
 
 }

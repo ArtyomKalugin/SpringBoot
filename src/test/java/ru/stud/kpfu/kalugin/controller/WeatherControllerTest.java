@@ -9,14 +9,14 @@ import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.http.MediaType;
 import org.springframework.test.context.junit4.SpringRunner;
 import org.springframework.test.web.servlet.MockMvc;
-import ru.stud.kpfu.kalugin.dto.AppealDto;
-import ru.stud.kpfu.kalugin.model.Appeal;
-import ru.stud.kpfu.kalugin.model.User;
+import ru.stud.kpfu.kalugin.dto.WeatherDto;
 import ru.stud.kpfu.kalugin.model.Weather;
 import ru.stud.kpfu.kalugin.repository.AppealRepository;
 import ru.stud.kpfu.kalugin.repository.UserRepository;
+import ru.stud.kpfu.kalugin.repository.WeatherRepository;
 import ru.stud.kpfu.kalugin.service.AppealService;
 import ru.stud.kpfu.kalugin.service.UserService;
+import ru.stud.kpfu.kalugin.service.WeatherService;
 
 import java.util.Arrays;
 
@@ -26,38 +26,32 @@ import static org.springframework.test.web.servlet.request.MockMvcRequestBuilder
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
 
 @RunWith(SpringRunner.class)
-@WebMvcTest(AppealController.class)
-public class AppealControllerTest {
+@WebMvcTest(WeatherController.class)
+public class WeatherControllerTest {
 
     @Autowired
     private MockMvc mockMvc;
 
     @MockBean
-    private AppealService appealService;
+    private WeatherService weatherService;
 
     @MockBean
-    private AppealRepository appealRepository;
+    private WeatherRepository weatherRepository;
 
     @MockBean
     private UserService userService;
 
     @MockBean
+    private AppealService appealService;
+
+    @MockBean
     private UserRepository userRepository;
+
+    @MockBean
+    private AppealRepository appealRepository;
 
     @Before
     public void init() {
-        User user = new User();
-        user.setEmail("test@mail.ru");
-        user.setName("Ivan");
-        user.setPassword("testTEST");
-        user.setVerificationCode("123");
-
-        User user2 = new User();
-        user2.setEmail("test2@mail.ru");
-        user2.setName("Ivan");
-        user2.setPassword("testTEST");
-        user2.setVerificationCode("1234");
-
         Weather weather = new Weather();
         weather.setEmail("test@mail.ru");
         weather.setCity("Kazan");
@@ -66,39 +60,29 @@ public class AppealControllerTest {
         weather2.setEmail("test2@mail.ru");
         weather2.setCity("Moscow");
 
-        Appeal appeal = new Appeal();
-        appeal.setDate("30.03.2022");
-        appeal.setUser(user);
-        appeal.setWeather(weather);
-
-        Appeal appeal2 = new Appeal();
-        appeal2.setDate("29.03.2022");
-        appeal2.setUser(user2);
-        appeal2.setWeather(weather2);
-
-        given(appealService.getAppealsByUserId(1)).willReturn(Arrays.asList(AppealDto.fromModel(appeal)));
-        given(appealService.getAppealsByWeatherCity("Moscow")).willReturn(Arrays.asList(AppealDto.fromModel(appeal2)));
+        given(weatherService.findAll()).willReturn(Arrays.asList(WeatherDto.fromModel(weather),
+                WeatherDto.fromModel(weather2)));
+        given(weatherService.getWeathersByCity("Moscow")).willReturn(Arrays.asList(WeatherDto.fromModel(weather2)));
     }
 
     @Test
-    public void testGetAppealsByUserId() throws Exception {
-        mockMvc.perform(get("/appeals/1")
+    public void testGetAll() throws Exception {
+        mockMvc.perform(get("/allWeather")
+                .contentType(MediaType.APPLICATION_JSON))
+                .andExpect(status().isOk())
+                .andExpect(content().contentTypeCompatibleWith(MediaType.APPLICATION_JSON))
+                .andExpect(jsonPath("$", hasSize(2)))
+                .andExpect(jsonPath("$[0].city").value("Kazan"));
+    }
+
+    @Test
+    public void testGetWeatherByCity() throws Exception {
+        mockMvc.perform(get("/history/weather/Moscow")
                 .contentType(MediaType.APPLICATION_JSON))
                 .andExpect(status().isOk())
                 .andExpect(content().contentTypeCompatibleWith(MediaType.APPLICATION_JSON))
                 .andExpect(jsonPath("$", hasSize(1)))
-                .andExpect(jsonPath("$[0].date").value("30.03.2022"));
+                .andExpect(jsonPath("$[0].city").value("Moscow"));
     }
-
-    @Test
-    public void testGetAppealsByCity() throws Exception {
-        mockMvc.perform(get("/appeals/city/Moscow")
-                .contentType(MediaType.APPLICATION_JSON))
-                .andExpect(status().isOk())
-                .andExpect(content().contentTypeCompatibleWith(MediaType.APPLICATION_JSON))
-                .andExpect(jsonPath("$", hasSize(1)))
-                .andExpect(jsonPath("$[0].date").value("29.03.2022"));
-    }
-
 
 }

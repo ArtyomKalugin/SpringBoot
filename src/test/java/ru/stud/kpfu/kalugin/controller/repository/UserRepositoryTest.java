@@ -75,12 +75,12 @@ public class UserRepositoryTest {
         Assert.assertEquals(3, result.size());
     }
 
-//    @Test
-//    public void testFindUserByNameAndId() {
-//        User result = userRepository.findUserByNameAndId("Igor", "3");
-//        Assert.assertNotNull(result);
-//        Assert.assertEquals("Igor", result.getName());
-//    }
+    @Test
+    public void testFindUserByNameAndId() {
+        User result = userRepository.findUserByNameAndId("Igor", "3");
+        Assert.assertNotNull(result);
+        Assert.assertEquals("Igor", result.getName());
+    }
 
     @Test
     public void testFindAllByIds() {
