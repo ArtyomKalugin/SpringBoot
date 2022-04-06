@@ -1,6 +1,7 @@
 package ru.stud.kpfu.kalugin.aspect;
 
 import org.aspectj.lang.ProceedingJoinPoint;
+import org.aspectj.lang.annotation.After;
 import org.aspectj.lang.annotation.Around;
 import org.aspectj.lang.annotation.Aspect;
 import org.aspectj.lang.annotation.Pointcut;
@@ -25,7 +26,7 @@ public class LoggingAspect {
 
     }
 
-    @Around("logUserEmail()")
+    @After("logUserEmail()")
     public Object logAllMethods(ProceedingJoinPoint proceedingJoinPoint) throws Throwable {
         UserDto user = (UserDto) proceedingJoinPoint.getArgs()[1];
 
