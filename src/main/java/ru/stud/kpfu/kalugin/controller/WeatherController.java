@@ -6,8 +6,7 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
-import ru.stud.kpfu.kalugin.dto.AppealDto;
-import ru.stud.kpfu.kalugin.dto.UserDto;
+import ru.stud.kpfu.kalugin.aspect.Loggable;
 import ru.stud.kpfu.kalugin.dto.WeatherDto;
 import ru.stud.kpfu.kalugin.helper.JsonHelper;
 import ru.stud.kpfu.kalugin.model.Appeal;
@@ -17,8 +16,6 @@ import ru.stud.kpfu.kalugin.service.AppealService;
 import ru.stud.kpfu.kalugin.service.HttpWeatherService;
 import ru.stud.kpfu.kalugin.service.UserService;
 import ru.stud.kpfu.kalugin.service.WeatherService;
-
-import javax.servlet.http.HttpServletRequest;
 import java.io.IOException;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
@@ -52,6 +49,7 @@ public class WeatherController {
         return weatherService.getWeathersByCity(city);
     }
 
+    @Loggable
     @GetMapping("/weather")
     public String getWeather(@RequestParam Optional<String> city, Authentication authentication)
             throws IOException {
