@@ -28,7 +28,7 @@ public class LoggingAspect {
 
     }
 
-    @After("logCityRequest()")
+    @Around("logCityRequest()")
     public Object logAllMethods(ProceedingJoinPoint proceedingJoinPoint) throws Throwable {
         Optional<String> city = (Optional<String>) proceedingJoinPoint.getArgs()[0];
 

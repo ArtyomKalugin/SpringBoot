@@ -1,5 +1,10 @@
 package ru.stud.kpfu.kalugin.controller;
 
+import io.swagger.annotations.ApiOperation;
+import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.media.Content;
+import io.swagger.v3.oas.annotations.responses.ApiResponse;
+import io.swagger.v3.oas.annotations.responses.ApiResponses;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.Authentication;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -39,16 +44,25 @@ public class WeatherController {
         this.appealService = appealService;
     }
 
+    @Operation(summary = "Returns all weather history")
+    @ApiResponses(value = {@ApiResponse(responseCode = "200", description = "Weather was get",
+            content = {@Content(mediaType = "application/json")})})
     @GetMapping("/allWeather")
     public Iterable<WeatherDto> getAll() {
         return weatherService.findAll();
     }
 
+    @Operation(summary = "Returns all weather history by city")
+    @ApiResponses(value = {@ApiResponse(responseCode = "200", description = "Weather was get",
+            content = {@Content(mediaType = "application/json")})})
     @GetMapping("/history/weather/{city}")
     public List<WeatherDto> getWeatherByCity(@PathVariable String city) {
         return weatherService.getWeathersByCity(city);
     }
 
+    @Operation(summary = "Returns weather by city")
+    @ApiResponses(value = {@ApiResponse(responseCode = "200", description = "Weather was get",
+            content = {@Content(mediaType = "application/json")})})
     @Loggable
     @GetMapping("/weather")
     public String getWeather(@RequestParam Optional<String> city, Authentication authentication)
